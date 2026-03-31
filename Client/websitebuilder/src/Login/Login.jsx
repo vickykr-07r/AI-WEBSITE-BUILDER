@@ -4,13 +4,20 @@ import { auth, provider } from "../firebase";
 import { signInWithPopup } from "firebase/auth";
 import { useContext } from "react";
 import { ServerContext } from "../Context/ServerContext";
+import axios from "axios"
 function Login({ open, onClose }) {
   if (!open) return null;
   const {Serverurl}=useContext(ServerContext);
   const googleauth=async()=>{
     try {
         const result=await signInWithPopup(auth,provider)
-        console.log(result.user)
+        console.log(result)
+        const data=await axios.post(`${Serverurl}/api/auth/google`,{
+          name:result.user.displayName,
+          email:result.user.email,
+          avatar:result.user.photoURL
+        },{withCredentials:true})
+        console.log(data)
     } catch (error) {
         console.log(error)
     }

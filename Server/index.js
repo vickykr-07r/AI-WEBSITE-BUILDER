@@ -12,7 +12,7 @@ app.use(express.json())
 import cors from "cors"
 app.use(cors(
     {
-        origin:"http://localhost:5173/",
+        origin:"http://localhost:5173",
         credentials:true
     }
 ))
@@ -21,6 +21,9 @@ import dbconnect from "./db/db.connect.js";
 
 import { authRouter } from "./Routes/auth.routes.js";
 app.use("/api/auth",authRouter)
+
+import { userRouter } from "./Routes/user.routes.js";
+app.use("/api/user",userRouter)
 
 app.listen(process.env.PORT,()=>{
     console.log("the app is listening")

@@ -2,7 +2,7 @@ import { Children, createContext } from "react"
 
 export const ServerContext=createContext()
 function Context({children}){
-    const Serverurl="http://localhost:8080/"
+    const Serverurl="http://localhost:8080"
     const value={
         Serverurl
     }
