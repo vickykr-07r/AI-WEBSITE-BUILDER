@@ -1,51 +1,112 @@
-import { useState } from "react"
-import Style from "../Home/Home.module.css"
-import Login from "../Login/Login.jsx"
-function Home(){
-    const hightlight=["Ai Generated Code","Fully Responsive Layouts","Production Ready Output"]
-    const [openlogin,setOpenLogin]=useState(false);
-    return (
-        <>
-        <div className={Style.container}>
+import { useContext, useState } from "react";
+import Style from "../Home/Home.module.css";
+import Login from "../Login/Login.jsx";
+import { useDispatch, useSelector } from "react-redux";
+import { GiTwoCoins } from "react-icons/gi";
+import axios from "axios"
+import { ServerContext } from "../Context/ServerContext.jsx";
+import { setUserData } from "../Redux/userSlice.js";
+function Home() {
 
-        <div className={Style.nav}>
-        <div className={Style.left}>
-        <h1>GenWeb.ai</h1>
-        </div>
-        <div className={Style.right}>
-         <p>Pricing</p>
-         <button onClick={()=>{setOpenLogin(true)}}>Get Started</button>
-        </div>
-        </div>
+  const highlight = [
+    "AI Generated Code",
+    "Fully Responsive Layouts",
+    "Production Ready Output",
+  ];
 
-        <div className={Style.box}>
-        <h1>Build Stunning Websites</h1>
-        <h2>With AI</h2>
-        <p>Describe Your Idea And Let AI Generate A Modern, responsive,production-ready websites.</p>
-        <button onClick={()=>{setOpenLogin(true)}}>Get Started</button>
-        </div>
+  const [openLogin, setOpenLogin] = useState(false);
+  const { userData } = useSelector((state) => state.user);
+  const [openProfile,setopenProfile]=useState(false);
+  const {Serverurl}=useContext(ServerContext);
+  const dispatch=useDispatch()
 
-        <div className={Style.card}>
-            {hightlight.map((h,i)=>{
-            return <div key={i} className={Style.cardata}>
-                <h1>{h}</h1>
-                <p>GenWeb ai builds real websites - clean codes, animation,responsiveness and scalable structure </p>
-            </div>
-            })}
-        </div>
+  const logout =async()=>{
+try {
+  const result=await axios.get(`${Serverurl}/api/auth/logout`,{withCredentials:true})
+  console.log(result.data)
+  dispatch(setUserData(null))
+  setOpenLogin(false)
+} catch (error) {
+  console.log(error)
+}
+  }
 
-        <footer>
-            &copy; {new Date().getFullYear()} GenWeb.AI
-        </footer>
+  return (
+    <>
+     <div className={Style.container}>
+  
+  <div className={Style.nav}>
+    <div className={Style.left}>
+      <h1>GenWeb.ai</h1>
+    </div>
 
-        {openlogin && 
-        <Login open={openlogin} onClose={() => setOpenLogin(false)} />
-        }
-        
-        </div>
-        </>
-    )
+    <div className={Style.right}>
+      <div className={Style.coins}>
+       <button>< GiTwoCoins/>{userData.credits}</button>
+      </div>
+        <div>
+          <p>Pricing</p>
+      {!userData ? <button onClick={() => setOpenLogin(true)}>
+          Get Started
+        </button> : 
+       <img src={userData.avatar} alt="" onClick={()=>{setopenProfile(!openProfile)}}/>
+      }
+      
+      </div>
+      
+    </div>
 
+  </div>
+
+  <div className={Style.box}>
+    <h1>Build Websites with AI 🚀</h1>
+    <p>
+      Generate production-ready websites with clean code,
+      modern UI, animations and full responsiveness.
+    </p>
+    <button onClick={() => setOpenLogin(true)}>
+      Start Building
+    </button>
+  </div>
+
+  <div className={Style.card}>
+    {highlight.map((h, i) => (
+      <div key={i} className={Style.cardata}>
+        <h2>{h}</h2>
+        <p>
+          GenWeb AI builds real websites with clean code,
+          animations, responsiveness and scalable structure.
+        </p>
+      </div>
+    ))}
+  </div>
+
+  <footer>
+    © {new Date().getFullYear()} GenWeb.AI
+  </footer>
+
+  {openLogin && (
+    <Login open={openLogin} onClose={() => setOpenLogin(false)} />
+  )}
+
+  {openProfile &&
+  <div className={Style.profile}>
+  <div className={Style.userdaata}>
+  <p>{userData.name}</p>
+  <p>{userData.email}</p>
+  </div>
+  <div className={Style.dashboard}>
+    <h4>Dashboard</h4>
+  </div>
+  <div>
+    <button onClick={logout}>Logout</button>
+  </div>
+  </div>
+
+  }
+     </div>
+    </>
+  );
 }
 
-export default Home
+export default Home;

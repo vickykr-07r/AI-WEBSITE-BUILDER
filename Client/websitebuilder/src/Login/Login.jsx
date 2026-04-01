@@ -5,9 +5,12 @@ import { signInWithPopup } from "firebase/auth";
 import { useContext } from "react";
 import { ServerContext } from "../Context/ServerContext";
 import axios from "axios"
+import { useDispatch } from "react-redux";
+import { setUserData } from "../Redux/userSlice";
 function Login({ open, onClose }) {
   if (!open) return null;
   const {Serverurl}=useContext(ServerContext);
+  const dispatch=useDispatch()
   const googleauth=async()=>{
     try {
         const result=await signInWithPopup(auth,provider)
@@ -17,7 +20,7 @@ function Login({ open, onClose }) {
           email:result.user.email,
           avatar:result.user.photoURL
         },{withCredentials:true})
-        console.log(data)
+        dispatch(setUserData(data))
     } catch (error) {
         console.log(error)
     }
