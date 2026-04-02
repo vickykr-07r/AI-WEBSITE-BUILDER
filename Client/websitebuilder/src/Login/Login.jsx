@@ -7,8 +7,10 @@ import { ServerContext } from "../Context/ServerContext";
 import axios from "axios"
 import { useDispatch } from "react-redux";
 import { setUserData } from "../Redux/userSlice";
+import { useNavigate } from "react-router-dom";
 function Login({ open, onClose }) {
   if (!open) return null;
+  const navigate=useNavigate()
   const {Serverurl}=useContext(ServerContext);
   const dispatch=useDispatch()
   const googleauth=async()=>{
@@ -21,6 +23,8 @@ function Login({ open, onClose }) {
           avatar:result.user.photoURL
         },{withCredentials:true})
         dispatch(setUserData(data))
+        navigate("/")
+        onClose();
     } catch (error) {
         console.log(error)
     }
