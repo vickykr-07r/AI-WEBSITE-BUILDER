@@ -1,4 +1,6 @@
-import User from "../Models/user.model"
+import { generateResponse } from "../Config/openRouter.js";
+import User from "../Models/user.model.js"
+import { extractJson } from "../Utils/extractjson.js";
 
 const masterPrompt = `
 YOU ARE A PRINCIPAL FRONTEND ARCHITECT
@@ -156,7 +158,7 @@ export const generatewebsite=async(req,res)=>{
             message:"prompt is required"
         })
        } 
-       const user=req.userId
+       const user=await User.findById(req.userId)
        if(!user){
        return res.status(400).json({
         message:"user not found"
@@ -164,7 +166,12 @@ export const generatewebsite=async(req,res)=>{
        }
 
        const finalprompt=masterPrompt.replace("USER_PROMPT",prompt)
-       
+       let raw=""
+       let parsed=null 
+       for(let i=0;i<2 && !parsed;i++){
+       raw=await generateResponse(finalprompt)
+       parsed=await extractJson(raw)
+        }
     } catch (error) {
         
     }
