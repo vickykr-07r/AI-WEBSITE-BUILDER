@@ -1,6 +1,7 @@
 import { generateResponse } from "../Config/openRouter.js";
 import User from "../Models/user.model.js"
 import { extractJson } from "../Utils/extractjson.js";
+import Website from "../Models/website.model.js";
 
 const masterPrompt = `
 YOU ARE A PRINCIPAL FRONTEND ARCHITECT
@@ -165,14 +166,57 @@ export const generatewebsite=async(req,res)=>{
        })
        }
 
+       if(user.credits<50){
+       return res.status(400).json({
+        message:"you have not enough credits to generate a website"
+       })
+       }
+
        const finalprompt=masterPrompt.replace("USER_PROMPT",prompt)
        let raw=""
        let parsed=null 
        for(let i=0;i<2 && !parsed;i++){
        raw=await generateResponse(finalprompt)
        parsed=await extractJson(raw)
+       if(!parsed){
+        raw=await generateResponse(finalprompt + "\n\nRETURN ONLY RAW JSON.")
+        parsed=await extractJson(raw)
+       }
         }
+
+        if(!parsed.code){
+        console.log("ai returned invalid response",raw)
+        return res.status(400).json({message:"ai returned invalid response"})
+        }
+
+        const website =await Website.create({
+          user:user._id,
+          title:prompt.slice(0,60),
+          latestCode:parsed.code,
+          conversation:[
+            {
+              role:"ai",
+              content:parsed.message
+            },
+            {
+              role:"user",
+              content:prompt
+            }
+          ]
+        })
+
+        user.credits-=50;
+        await user.save();
+
+        return res.status(201).json({
+          websiteId:website._id,
+          remainingCredits:user.credits
+
+        })
+       
     } catch (error) {
-        
+        return res.status(500).json({
+          message:`generate website error ${error}`
+        })
     }
 }

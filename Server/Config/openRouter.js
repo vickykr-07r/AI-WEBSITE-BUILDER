@@ -9,7 +9,7 @@ const res= await fetch(openRouterurl, {
     'Content-Type': 'application/json',
   },
   body: JSON.stringify({
-    model: 'model',
+    model: model,
     messages: [
         {role:"system",content:"You must return ONLY valid raw JSON. "},
       {

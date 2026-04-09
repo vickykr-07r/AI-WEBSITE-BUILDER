@@ -1,6 +1,9 @@
 import { useState } from "react";
 import Style from "../Generate/Generate.module.css"
 import { IoMdArrowRoundBack } from "react-icons/io";
+import axios from "axios"
+import { useContext } from "react";
+import { ServerContext } from "../Context/ServerContext.jsx";
 function Generate(){
     const[prompt,setprompt]=useState("");
     function handleinput(event){
@@ -8,6 +11,15 @@ function Generate(){
     }
     function handlesubmit(event){
      event.preventDefault();
+    }
+    let {Serverurl}=useContext(ServerContext)
+    const handlegeneratewebsite=async()=>{
+        try {
+            const result=await axios.post(`${Serverurl}/api/website/generate`,{prompt},{withCredentials:true});
+            console.log(result)
+        } catch (error) {
+            
+        }
     }
     return (
         <>
@@ -28,7 +40,7 @@ function Generate(){
           <p>Describe Your Websites</p> 
           <form onSubmit={handlesubmit}>
           <textarea placeholder="Describe Your website in detail" onChange={handleinput} value={prompt} name="prompt"/>
-          <button>Generate Website</button>
+          <button onClick={handlegeneratewebsite}>Generate Website</button>
           </form> 
          </div>
          </div>

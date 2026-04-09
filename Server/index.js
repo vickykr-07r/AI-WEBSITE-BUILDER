@@ -25,6 +25,9 @@ app.use("/api/auth",authRouter)
 import { userRouter } from "./Routes/user.routes.js";
 app.use("/api/user",userRouter)
 
+import { websiteRouter } from "./Routes/website.routes.js";
+app.use("/api/website",websiteRouter)
+
 app.listen(process.env.PORT,()=>{
     console.log("the app is listening")
     dbconnect();  
