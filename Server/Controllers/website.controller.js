@@ -165,14 +165,15 @@ export const generatewebsite=async(req,res)=>{
         message:"user not found"
        })
        }
-
+       
+        user.credits+=50;
        if(user.credits<50){
        return res.status(400).json({
         message:"you have not enough credits to generate a website"
        })
        }
 
-       const finalprompt=masterPrompt.replace("USER_PROMPT",prompt)
+       const finalprompt = masterPrompt.replace("{USER_PROMPT}", prompt);
        let raw=""
        let parsed=null 
        for(let i=0;i<2 && !parsed;i++){
@@ -188,7 +189,7 @@ export const generatewebsite=async(req,res)=>{
         console.log("ai returned invalid response",raw)
         return res.status(400).json({message:"ai returned invalid response"})
         }
-
+        
         const website =await Website.create({
           user:user._id,
           title:prompt.slice(0,60),
@@ -205,7 +206,7 @@ export const generatewebsite=async(req,res)=>{
           ]
         })
 
-        user.credits-=50;
+       
         await user.save();
 
         return res.status(201).json({
@@ -219,4 +220,25 @@ export const generatewebsite=async(req,res)=>{
           message:`generate website error ${error}`
         })
     }
+}
+
+const getwebsitebyid=async(req,res)=>{
+try {
+      const website=await Website.findOne({
+        _id:req.params.id,
+        user:req.user._id
+      })
+
+      if(!website){
+       return res.status(400).json({
+       message:"website not found"
+       })
+      }
+
+      return res.status(200).json(website)
+} catch (error) {
+ return res.status(500).json({
+          message:`get website by id error ${error}`
+        })
+}
 }

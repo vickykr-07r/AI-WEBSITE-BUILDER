@@ -18,7 +18,7 @@ function Generate(){
             const result=await axios.post(`${Serverurl}/api/website/generate`,{prompt},{withCredentials:true});
             console.log(result)
         } catch (error) {
-            
+            console.error("Frontend Error ❌:", error.response?.data || error.message);
         }
     }
     return (

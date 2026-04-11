@@ -4,10 +4,10 @@ export const extractJson=async(text)=>{
          return
         }
 
-        const cleaned=text.
-        replace=(/```json/gi,"")
-        .replace(/```/g,"")
-        .trim();
+        const cleaned = text
+      .replace(/```json/gi, "")
+      .replace(/```/g, "")
+      .trim();
 
         const firstBrace=cleaned.indexOf(`{`)
         const closeBrace=cleaned.lastIndexOf(`}`)

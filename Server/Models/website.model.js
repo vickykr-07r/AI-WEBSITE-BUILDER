@@ -43,5 +43,35 @@ const websiteSchema=new mongoose.Schema({
     }
 },{timestamps:true})
 
+websiteSchema.pre('save', async function() {  
+  if (!this.slug) {
+    let baseSlug = this.title.toLowerCase().trim()
+      .replace(/[^a-z0-9\\s-]/g, '')
+      .replace(/\\s+/g, '-')
+      .replace(/-+/g, '-');
+    
+    if (!baseSlug || baseSlug === 'untitled-website') {
+      baseSlug = 'website';
+    }
+    
+   
+    let attempt = 0;
+    while (attempt < 10) {
+      const randomSuffix = Math.random().toString(36).slice(-6);
+      this.slug = baseSlug + '-' + randomSuffix;
+      
+      const count = await this.constructor.countDocuments({ slug: this.slug });
+      if (count === 0) {
+        break;
+      }
+      attempt++;
+    }
+    
+    if (attempt >= 10) {
+      this.slug = 'website-' + Date.now().toString(36);
+    }
+  }
+});
+
 const Website =mongoose.model("Website",websiteSchema)
 export default Website;
