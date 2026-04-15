@@ -222,23 +222,29 @@ export const generatewebsite=async(req,res)=>{
     }
 }
 
-const getwebsitebyid=async(req,res)=>{
-try {
-      const website=await Website.findOne({
-        _id:req.params.id,
-        user:req.user._id
-      })
+export const getwebsitebyid = async (req, res) => {
+  try {
+    if (!req.userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
 
-      if(!website){
-       return res.status(400).json({
-       message:"website not found"
-       })
-      }
+    const website = await Website.findOne({
+      _id: req.params.id,
+      user: req.userId
+    });
 
-      return res.status(200).json(website)
-} catch (error) {
- return res.status(500).json({
-          message:`get website by id error ${error}`
-        })
-}
-}
+    if (!website) {
+      return res.status(404).json({
+        message: "website not found"
+      });
+    }
+
+    return res.status(200).json(website);
+
+  } catch (error) {
+    console.log(error); 
+    return res.status(500).json({
+      message: `get website by id error ${error}`
+    });
+  }
+};
