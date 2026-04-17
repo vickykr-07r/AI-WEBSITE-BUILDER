@@ -1,0 +1,99 @@
+.container {
+  display: flex;
+  height: 100vh;
+  background-color: #0f172a;
+  color: white;
+}
+
+aside {
+  width: 320px;
+  background-color: #020617;
+  border-right: 1px solid #1e293b;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  padding: 15px;
+  font-size: 18px;
+  font-weight: 600;
+  border-bottom: 1px solid #1e293b;
+}
+
+.chat {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat div {
+  padding: 10px 12px;
+  border-radius: 8px;
+  max-width: 85%;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.user {
+  align-self: flex-end;
+  background-color: #2563eb;
+}
+
+.bot {
+  align-self: flex-start;
+  background-color: #1e293b;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.prevheader {
+  height: 50px;
+  background-color: #020617;
+  border-bottom: 1px solid #1e293b;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 15px;
+}
+
+.prevheaderleft span {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.prevheaderright {
+  display: flex;
+  gap: 10px;
+}
+
+.prevheaderright button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #1e293b;
+  border: none;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.prevheaderright button:hover {
+  background-color: #334155;
+}
+
+.preview {
+  flex: 1;
+  background-color: white;
+  color: black;
+  padding: 10px;
+  overflow: auto;
+}
