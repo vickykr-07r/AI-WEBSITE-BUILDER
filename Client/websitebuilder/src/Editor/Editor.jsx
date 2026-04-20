@@ -24,7 +24,16 @@ export function Editor(){
         getwebsitebyid()
     },[id, Serverurl])
 
-    
+   useEffect(()=>{
+    if(!iframeRef.current || !website?.latestCode) return;
+
+    const blob = new Blob([website.latestCode], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+
+    iframeRef.current.src = url;
+
+    return ()=> URL.revokeObjectURL(url);
+},[website?.latestCode])
 
     if(!website){
         return <div>Loading...</div>
@@ -49,7 +58,7 @@ export function Editor(){
              </div>
              </div>
 
-             <iframe ref={iframeRef}></iframe>
+             <iframe ref={iframeRef} sandbox="allow-scripts"></iframe>
             </div>
         </div>
     )
