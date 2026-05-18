@@ -7,16 +7,56 @@ import Style from "../Editor/Editor.module.css"
 import { FaRocket } from "react-icons/fa";
 import { FaCode } from "react-icons/fa";
 import { MdMonitor } from "react-icons/md";
-export function Editor(){
+import { IoIosSend } from "react-icons/io";
+import { MdCancel } from "react-icons/md";
+import MonacoEditor from "@monaco-editor/react";
+export function WebsiteEditor(){
     let {Serverurl}=useContext(ServerContext);
     const {id}=useParams();
     const [website,setWebsite]=useState(null);
+    const [code,setCode]=useState("");
+    const [prompt,setPrompt]=useState("");
+    const [messages,setMessages]=useState([]);
     const iframeRef=useRef(null);
+    const [thinkingIndex,setThinkingIndex]=useState(0);
+    const [updateLoading,setUpdateLoading]=useState(false);
+    const [showCode,setShowCode]=useState(false);
+    const [showfullpreview,setshowfullpreview]=useState(false);
+    const thinkingSteps=[
+        "Understanding your request...",
+        "planning layout changes...",
+        "Improving responsiveness...",
+        "Applying animations...",
+        "finalizing update...",
+    ]
+    const handleinput=async()=>{
+        setUpdateLoading(true);
+        setMessages((m)=>[...m,{role:"user",content:prompt}])
+        try {
+            const result=await axios.post(`${Serverurl}/api/website/update/${id}`,{prompt},{withCredentials:true})
+            console.log(result)
+            setUpdateLoading(false);
+            setMessages((m)=>[...m,{role:"ai",content:result.data.message}])
+            setCode(result.data.code);
+        } catch (error) {
+            console.log(error)
+            setUpdateLoading(false);
+        }
+    }
+    useEffect(()=>{
+    const i= setInterval(()=>{
+        setThinkingIndex((i)=>(i+1)%thinkingSteps.length)
+     },1200)
+
+     return ()=>clearInterval(i)
+    },[updateLoading])
     useEffect(()=>{
         const getwebsitebyid=async()=>{
             try {
                 const result=await axios.get(`${Serverurl}/api/website/get-by-id/${id}`,{withCredentials:true}) 
                 setWebsite(result.data);
+                setCode(result.data.latestCode);
+                setMessages(result.data.conversation);
             } catch (error) {
                 console.log(error)
             }
@@ -25,15 +65,15 @@ export function Editor(){
     },[id, Serverurl])
 
    useEffect(()=>{
-    if(!iframeRef.current || !website?.latestCode) return;
+    if(!iframeRef.current || !code) return;
 
-    const blob = new Blob([website.latestCode], { type: "text/html" });
+    const blob = new Blob([code], { type: "text/html" });
     const url = URL.createObjectURL(blob);
 
     iframeRef.current.src = url;
 
     return ()=> URL.revokeObjectURL(url);
-},[website?.latestCode])
+},[code])
 
     if(!website){
         return <div>Loading...</div>
@@ -43,7 +83,24 @@ export function Editor(){
         <div className={Style.container}>
             <aside>
                 <Header/>
-                <Chat/>
+                 <div className={Style.chat}>
+                {messages?.map((m,i)=>(
+                    <div key={i}>
+                        {m.content}
+                    </div>
+                ))}
+
+                {updateLoading &&
+                 <div className={Style.aloading}>
+                    {thinkingSteps[thinkingIndex]}
+                 </div>
+                }
+
+                <div className={Style.update}>
+                <textarea placeholder="" value={prompt} onChange={(e)=>setPrompt(e.target.value)}></textarea>
+                <button onClick={handleinput}><IoIosSend /></button>
+                </div>
+            </div>
             </aside>
 
             <div className={Style.main}>
@@ -53,13 +110,44 @@ export function Editor(){
              </div>
              <div className={Style.prevheaderright}>
              <button><FaRocket />Deploy</button>
-             <button><FaCode /></button>
-             <button><MdMonitor /></button>
+             <button onClick={()=>{setShowCode(true)}}><FaCode /></button>
+             <button onClick={()=>setshowfullpreview(true)}><MdMonitor /></button>
              </div>
              </div>
 
              <iframe ref={iframeRef} sandbox="allow-scripts"></iframe>
             </div>
+            
+            {showCode && 
+              <div className={Style.codeshow}>
+             <div className={Style.codeshownav}>
+                <span><h1>Index.html</h1></span>
+                <button onClick={()=>{setShowCode(false)}}><MdCancel /></button>
+             </div>
+             <MonacoEditor 
+             theme='vs-dark'
+             value={code}
+             language='html'
+             onChange={(v)=>{setCode(v)}}/>
+            </div>
+            }
+
+            {showfullpreview &&
+
+<div className={Style.setfullpreview}>
+    
+    <button 
+    className={Style.closepreview}
+    onClick={()=>setshowfullpreview(false)}
+    >
+      <MdCancel />
+    </button>
+
+    <iframe srcDoc={code}></iframe>
+</div>
+
+}
+           
         </div>
     )
 
@@ -72,16 +160,6 @@ export function Editor(){
         )
     }
 
-    function Chat(){
-        return(
-            <div className={Style.chat}>
-                {website.conversation?.map((m,i)=>(
-                    <div key={i}>
-                        {m.content}
-                    </div>
-                ))}
-            </div>
-        )
-    }
+    
 }
 

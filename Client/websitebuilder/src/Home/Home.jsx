@@ -82,9 +82,10 @@ function Home() {
             Generate production-ready websites with clean code,
             modern UI, animations and full responsiveness.
           </p>
-          <button onClick={() => setOpenLogin(true)}>
+          {userData ? <button onClick={()=>{navigate("/dashboard")}}>Go To Dashboard</button>:<button onClick={() => setOpenLogin(true)}>
             Start Building
-          </button>
+          </button>}
+          
         </div>
 
         <div className={Style.card}>

@@ -1,99 +1,196 @@
-.container {
-  min-height: 100vh;
-  background: #020617;
-  color: #e2e8f0;
-  font-family: "Inter", sans-serif;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
+.container{
+    width:100%;
+    min-height:100vh;
+    background:#0f172a;
+    color:white;
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
 }
 
-.nav {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 40px;
+.nav{
+    width:100%;
+    max-width:1200px;
+    display:flex;
+    align-items:center;
+    gap:15px;
+    font-size:26px;
+    margin-bottom:60px;
 }
 
-.nav svg {
-  font-size: 22px;
-  cursor: pointer;
+.nav svg{
+    cursor:pointer;
+    font-size:30px;
 }
 
-.nav h3 {
-  font-size: 20px;
-  font-weight: 600;
+.nav h3{
+    font-size:24px;
+    font-weight:600;
 }
 
-.data {
-  text-align: center;
-  margin-top: 40px;
+.data{
+    text-align:center;
+    margin-bottom:40px;
 }
 
-.data h1 {
-  font-size: 36px;
-  font-weight: 700;
+.data h1{
+    font-size:52px;
+    font-weight:700;
+    line-height:1.2;
 }
 
-.data h3 {
-  font-size: 24px;
-  color: #38bdf8;
-  margin-top: 10px;
+.data h3{
+    font-size:48px;
+    font-weight:700;
+    color:#38bdf8;
+    margin-top:5px;
 }
 
-.data p {
-  margin-top: 12px;
-  color: #94a3b8;
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
+.data p{
+    margin-top:18px;
+    color:#cbd5e1;
+    font-size:16px;
+    max-width:700px;
+    line-height:1.7;
 }
 
-.inputdata {
-  margin-top: 50px;
-  max-width: 600px;
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.inputdata{
+    width:100%;
+    max-width:850px;
+    background:#111827;
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
 }
 
-.inputdata p {
-  font-size: 14px;
-  color: #94a3b8;
+.inputdata p{
+    font-size:18px;
+    margin-bottom:15px;
+    color:#e2e8f0;
 }
 
-.inputdata textarea {
-  width: 100%;
-  height: 140px;
-  background: #0f172a;
-  border: 1px solid #1e293b;
-  border-radius: 10px;
-  padding: 12px;
-  color: #e2e8f0;
-  resize: none;
-  outline: none;
-  font-size: 14px;
+.inputdata form{
+    display:flex;
+    flex-direction:column;
+    gap:20px;
 }
 
-.inputdata textarea:focus {
-  border-color: #38bdf8;
+.inputdata textarea{
+    width:100%;
+    min-height:220px;
+    resize:none;
+    border:none;
+    outline:none;
+    border-radius:16px;
+    padding:20px;
+    font-size:16px;
+    background:#1e293b;
+    color:white;
+    line-height:1.7;
 }
 
-.inputdata button {
-  margin-top: 10px;
-  padding: 12px;
-  background: #38bdf8;
-  border: none;
-  border-radius: 10px;
-  color: #020617;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.3s;
+.inputdata textarea::placeholder{
+    color:#94a3b8;
 }
 
-.inputdata button:hover {
-  background: #0ea5e9;
+.inputdata button{
+    width:100%;
+    padding:16px;
+    border:none;
+    border-radius:14px;
+    background:#38bdf8;
+    color:white;
+    font-size:18px;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.inputdata button:hover{
+    transform:translateY(-2px);
+    background:#0ea5e9;
+}
+
+.a{
+    margin-top:30px;
+    background:#1e293b;
+    border-radius:18px;
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.b{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:16px;
+    font-weight:500;
+}
+
+.c{
+    width:100%;
+    height:10px;
+    background:#334155;
+    border-radius:50px;
+    overflow:hidden;
+    position:relative;
+}
+
+.c::before{
+    content:"";
+    position:absolute;
+    left:0;
+    top:0;
+    height:100%;
+    width:var(--progress);
+    background:#38bdf8;
+    border-radius:50px;
+    transition:0.4s;
+}
+
+.a span{
+    color:#38bdf8;
+    font-weight:600;
+}
+
+@media(max-width:768px){
+
+    .container{
+        padding:15px;
+    }
+
+    .data h1{
+        font-size:38px;
+    }
+
+    .data h3{
+        font-size:34px;
+    }
+
+    .data p{
+        font-size:14px;
+    }
+
+    .inputdata{
+        padding:20px;
+    }
+
+    .inputdata textarea{
+        min-height:180px;
+        font-size:15px;
+    }
+
+    .inputdata button{
+        font-size:16px;
+        padding:14px;
+    }
+
+    .b{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:8px;
+    }
 }

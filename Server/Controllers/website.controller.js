@@ -151,76 +151,133 @@ ABSOLUTE RULES
 - IF FORMAT IS BROKEN → RESPONSE IS INVALID
 `;
 
-export const generatewebsite=async(req,res)=>{
-    try {
-       const {prompt}=req.body;
-       if(!prompt){
-        return res.status(400).json({
-            message:"prompt is required"
-        })
-       } 
-       const user=await User.findById(req.userId)
-       if(!user){
-       return res.status(400).json({
-        message:"user not found"
-       })
-       }
-       
-        user.credits+=50;
-       if(user.credits<50){
-       return res.status(400).json({
-        message:"you have not enough credits to generate a website"
-       })
-       }
+// const masterPrompt = `
+// You are a senior frontend engineer and UI/UX designer.
 
-       const finalprompt = masterPrompt.replace("{USER_PROMPT}", prompt);
-       let raw=""
-       let parsed=null 
-       for(let i=0;i<2 && !parsed;i++){
-       raw=await generateResponse(finalprompt)
-       parsed=await extractJson(raw)
-       if(!parsed){
-        raw=await generateResponse(finalprompt + "\n\nRETURN ONLY RAW JSON.")
-        parsed=await extractJson(raw)
-       }
-        }
+// Create a fully functional, high-end website using ONLY HTML, CSS, and JavaScript.
 
-        if(!parsed.code){
-        console.log("ai returned invalid response",raw)
-        return res.status(400).json({message:"ai returned invalid response"})
-        }
-        
-        const website =await Website.create({
-          user:user._id,
-          title:prompt.slice(0,60),
-          latestCode:parsed.code,
-          conversation:[
-            {
-              role:"ai",
-              content:parsed.message
-            },
-            {
-              role:"user",
-              content:prompt
-            }
-          ]
-        })
+// USER REQUIREMENT:
+// {USER_PROMPT}
 
-       
-        await user.save();
+// IMPORTANT:
+// This must feel like a real working application, not a static website.
 
-        return res.status(201).json({
-          websiteId:website._id,
-          remainingCredits:user.credits
+// FUNCTIONAL REQUIREMENTS:
+// - Use JavaScript for real interactivity
+// - Use localStorage or sessionStorage to store and manage data
+// - Forms must be fully functional (save, validate, display data)
+// - Navigation must work like a real app (SPA style, no reload)
+// - Buttons must perform actions (not just UI)
+// - Add dynamic content updates using JS
 
-        })
-       
-    } catch (error) {
-        return res.status(500).json({
-          message:`generate website error ${error}`
-        })
+// STRUCTURE:
+// - Simulate multiple pages: Home, About, Services, Contact, Dashboard
+// - Each page must have different layout and content
+// - Dashboard should display stored data (like submitted forms)
+
+// DESIGN:
+// - Modern premium UI (startup-level design)
+// - Hero section, feature cards, testimonials, stats
+// - Call-to-action sections
+// - Smooth animations and hover effects
+// - Clean spacing and typography
+
+// RESPONSIVE:
+// - Fully responsive (mobile-first)
+// - Works on all devices
+// - No layout breaking
+
+// IMAGES:
+// - Use high-quality images from https://images.unsplash.com/
+// - Include: ?auto=format&fit=crop&w=1200&q=80
+
+// TECHNICAL:
+// - Single HTML file
+// - One <style> and one <script>
+// - No frameworks or libraries
+// - Use Flexbox/Grid
+
+// UX:
+// - Active navigation highlight
+// - Smooth transitions
+// - Loading states (basic)
+// - No empty sections
+
+// RETURN ONLY JSON:
+// {
+//   "message": "Website created successfully",
+//   "code": "<full HTML document>"
+// }
+// `;
+
+export const generatewebsite = async (req, res) => {
+  try {
+    const { prompt } = req.body;
+
+    if (!prompt) {
+      return res.status(400).json({
+        message: "prompt is required",
+      });
     }
-}
+
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(400).json({
+        message: "user not found",
+      });
+    }
+
+    if (user.credits < 50) {
+      return res.status(400).json({
+        message: "you have not enough credits to generate a website",
+      });
+    }
+
+    user.credits += 50;
+
+    const finalprompt = masterPrompt.replace("{USER_PROMPT}", prompt);
+
+    let raw = "";
+    let parsed = null;
+
+    for (let i = 0; i < 2 && !parsed; i++) {
+      raw = await generateResponse(finalprompt);
+      parsed = await extractJson(raw);
+
+      if (!parsed) {
+        raw = await generateResponse(finalprompt + "\n\nRETURN ONLY RAW JSON.");
+        parsed = await extractJson(raw);
+      }
+    }
+
+    if (!parsed || !parsed.code) {
+      return res.status(400).json({
+        message: "ai returned invalid response",
+      });
+    }
+
+    const website = await Website.create({
+      user: user._id,
+      title: prompt.slice(0, 60),
+      latestCode: parsed.code,
+      conversation: [
+        { role: "ai", content: parsed.message },
+        { role: "user", content: prompt },
+      ],
+    });
+
+    await user.save();
+
+    return res.status(201).json({
+      websiteId: website._id,
+      remainingCredits: user.credits,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: `generate website error ${error}`,
+    });
+  }
+};
 
 export const getwebsitebyid = async (req, res) => {
   try {
@@ -230,21 +287,122 @@ export const getwebsitebyid = async (req, res) => {
 
     const website = await Website.findOne({
       _id: req.params.id,
-      user: req.userId
+      user: req.userId,
     });
 
     if (!website) {
       return res.status(404).json({
-        message: "website not found"
+        message: "website not found",
       });
     }
 
     return res.status(200).json(website);
-
   } catch (error) {
-    console.log(error); 
     return res.status(500).json({
-      message: `get website by id error ${error}`
+      message: `get website by id error ${error}`,
+    });
+  }
+};
+
+export const changes = async (req, res) => {
+  try {
+    const { prompt } = req.body;
+
+    if (!prompt) {
+      return res.status(400).json({
+        message: "prompt is required",
+      });
+    }
+
+    const website = await Website.findOne({
+      _id: req.params.id,
+      user: req.userId,
+    });
+
+    if (!website) {
+      return res.status(404).json({
+        message: "website not found",
+      });
+    }
+
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(400).json({
+        message: "user not found",
+      });
+    }
+
+    if (user.credits < 25) {
+      return res.status(400).json({
+        message: "you have not enough credits to update the website",
+      });
+    }
+
+    user.credits -= 25;
+
+    const updatePrompt = `
+UPDATE THIS HTML WEBSITE.
+
+CURRENT CODE:
+${website.latestCode}
+
+USER REQUEST:
+${prompt}
+
+RETURN RAW JSON ONLY
+{
+  "message":"Short confirmation",
+  "code":"<UPDATED FULL HTML>"
+}
+`;
+
+    let raw = "";
+    let parsed = null;
+
+    for (let i = 0; i < 2 && !parsed; i++) {
+      raw = await generateResponse(updatePrompt);
+      parsed = await extractJson(raw);
+
+      if (!parsed) {
+        raw = await generateResponse(updatePrompt + "\n\nRETURN ONLY RAW JSON.");
+        parsed = await extractJson(raw);
+      }
+    }
+
+    if (!parsed || !parsed.code) {
+      return res.status(400).json({
+        message: "ai returned invalid response",
+      });
+    }
+
+    website.conversation.push(
+      { role: "user", content: prompt },
+      { role: "ai", content: parsed.message }
+    );
+
+    website.latestCode = parsed.code;
+
+    await website.save();
+    await user.save();
+
+    return res.status(201).json({
+      message: parsed.message,
+      code: parsed.code,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: `update website error ${error}`,
+    });
+  }
+};
+
+export const getall = async (req, res) => {
+  try {
+    const websites = await Website.find({ user: req.userId });
+    return res.status(200).json(websites);
+  } catch (error) {
+    return res.status(500).json({
+      message: `getall website error ${error}`,
     });
   }
 };
