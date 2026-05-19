@@ -28,7 +28,7 @@ function LiveSite() {
                 console.log(error);
                 setError("Site not found");
             } finally {
-                setLoading(false);
+                setLoading(false); 
             }
         };
 
