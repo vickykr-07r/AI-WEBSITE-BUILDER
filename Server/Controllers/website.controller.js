@@ -151,64 +151,6 @@ ABSOLUTE RULES
 - IF FORMAT IS BROKEN → RESPONSE IS INVALID
 `;
 
-// const masterPrompt = `
-// You are a senior frontend engineer and UI/UX designer.
-
-// Create a fully functional, high-end website using ONLY HTML, CSS, and JavaScript.
-
-// USER REQUIREMENT:
-// {USER_PROMPT}
-
-// IMPORTANT:
-// This must feel like a real working application, not a static website.
-
-// FUNCTIONAL REQUIREMENTS:
-// - Use JavaScript for real interactivity
-// - Use localStorage or sessionStorage to store and manage data
-// - Forms must be fully functional (save, validate, display data)
-// - Navigation must work like a real app (SPA style, no reload)
-// - Buttons must perform actions (not just UI)
-// - Add dynamic content updates using JS
-
-// STRUCTURE:
-// - Simulate multiple pages: Home, About, Services, Contact, Dashboard
-// - Each page must have different layout and content
-// - Dashboard should display stored data (like submitted forms)
-
-// DESIGN:
-// - Modern premium UI (startup-level design)
-// - Hero section, feature cards, testimonials, stats
-// - Call-to-action sections
-// - Smooth animations and hover effects
-// - Clean spacing and typography
-
-// RESPONSIVE:
-// - Fully responsive (mobile-first)
-// - Works on all devices
-// - No layout breaking
-
-// IMAGES:
-// - Use high-quality images from https://images.unsplash.com/
-// - Include: ?auto=format&fit=crop&w=1200&q=80
-
-// TECHNICAL:
-// - Single HTML file
-// - One <style> and one <script>
-// - No frameworks or libraries
-// - Use Flexbox/Grid
-
-// UX:
-// - Active navigation highlight
-// - Smooth transitions
-// - Loading states (basic)
-// - No empty sections
-
-// RETURN ONLY JSON:
-// {
-//   "message": "Website created successfully",
-//   "code": "<full HTML document>"
-// }
-// `;
 
 export const generatewebsite = async (req, res) => {
   try {
@@ -406,3 +348,33 @@ export const getall = async (req, res) => {
     });
   }
 };
+
+ export const deploy=async(req,res)=>{
+  try {
+    const website=await Website.findOne({
+      _id:req.params.id,
+      user:req.user._id
+    })
+    if(!website){
+    return res.status(400).json({
+      message:"website not found"
+    })
+    }
+
+    if(!website.slug){
+     website.slug=website.title.toLowerCase().replace(/[^a-z0-9]/g,"").slice(0,60)+website._id.toString().slice(-5)
+    }
+   website.deployed = true
+    website.deployurl=`${process.env.FRONTEND_URL}/site/${website.slug}`
+    await website.save();
+
+    return res.status(200).json({
+      url:website.deployurl
+    })
+  } catch (error) {
+     return res.status(500).json({
+      message: `deploy website error ${error}`,
+    });
+  
+  }
+}

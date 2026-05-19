@@ -13,7 +13,15 @@ function Dashboard() {
     const navigate=useNavigate();
     const [website, setWebsite] = useState([]);
     const [loading, setLoading] = useState(false);
-
+    
+    const handledeploy=async(id)=>{
+        try {
+            const result=await axios.get(`${Serverurl}/api/website/deploy/${id}`,{withCredentials:true})
+            window.open(`${result.data.url}`,"_blank")
+        } catch (error) {
+            console.log(error)
+        }
+    }
     useEffect(() => {
 
         const handlegetallwebsite = async () => {
@@ -104,7 +112,7 @@ function Dashboard() {
 
                 {
                     !w.deployed ? (
-                        <button>Deploy</button>
+                        <button onClick={()=>{handledeploy(w._id)}}>Deploy</button>
                     ) : (
                         <button>Share Link</button>
                     )

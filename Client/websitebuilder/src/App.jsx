@@ -5,6 +5,7 @@ import Dashboard from "./Dashboard/Dashboard.jsx";
 import Generate from "./Generate/Generate.jsx";
 import { useSelector } from "react-redux";
 import {  WebsiteEditor } from "./Editor/Editor.jsx";
+import LiveSite from "./LiveSite/LiveSite.jsx";
 function App() {
  useGetcurrentuser();
  const {userData}=useSelector(state=>state.user)
@@ -15,6 +16,7 @@ function App() {
     <Route path="/dashboard" element={userData ? <Dashboard/>:<Navigate to={<Home/>}/>}/>
     <Route path="/generate" element={userData ? <Generate/>:<Navigate to={<Home/>}/>}/>
     <Route path="/editor/:id" element={userData ? <WebsiteEditor/>:<Navigate to={<Home/>}/>}/>
+      <Route path="/site/:id" element={<LiveSite/>}/>
   </Routes>
    </>
   )
