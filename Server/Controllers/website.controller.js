@@ -353,7 +353,7 @@ export const getall = async (req, res) => {
   try {
     const website=await Website.findOne({
       _id:req.params.id,
-      user:req.user._id
+      user:req.userId
     })
     if(!website){
     return res.status(400).json({
@@ -376,5 +376,25 @@ export const getall = async (req, res) => {
       message: `deploy website error ${error}`,
     });
   
+  }
+}
+
+export const getbyslug=async(req,res)=>{
+  try {
+    const website=await Website.findOne({
+      slug:req.params.slug,
+      user:req.userId
+    })
+
+    if(!website){
+    return res.status(400).json({
+      message:"website not found"
+    })
+    }
+    return res.status(200).json(website)
+  } catch (error) {
+    return res.status(500).json({
+      message: `get by slug  website error ${error}`,
+    });
   }
 }

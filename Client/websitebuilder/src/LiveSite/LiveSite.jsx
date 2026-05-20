@@ -18,7 +18,7 @@ function LiveSite() {
                 setLoading(true);
 
                 const result = await axios.get(
-                    `${Serverurl}/api/website/get-by-id/${id}`,
+                    `${Serverurl}/api/website/getbyslug/${id}`,
                     { withCredentials: true }
                 );
 

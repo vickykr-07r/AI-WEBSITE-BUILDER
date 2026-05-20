@@ -13,7 +13,7 @@ function Dashboard() {
     const navigate=useNavigate();
     const [website, setWebsite] = useState([]);
     const [loading, setLoading] = useState(false);
-    
+    const [copiedId,setcopiedId]=useState(null);
     const handledeploy=async(id)=>{
         try {
             const result=await axios.get(`${Serverurl}/api/website/deploy/${id}`,{withCredentials:true})
@@ -51,7 +51,14 @@ function Dashboard() {
         handlegetallwebsite();
 
     }, []);
-
+   
+    const handlecopy=async(site)=>{
+        await navigator.clipboard.writeText(site.deployurl)
+        setcopiedId(site._id)
+        setTimeout(() => {
+            setcopiedId(null);
+        }, 2000);
+    }
     return (
         <div className={Style.container}>
 
