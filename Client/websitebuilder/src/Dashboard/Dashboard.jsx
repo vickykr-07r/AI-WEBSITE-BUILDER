@@ -18,6 +18,17 @@ function Dashboard() {
         try {
             const result=await axios.get(`${Serverurl}/api/website/deploy/${id}`,{withCredentials:true})
             window.open(`${result.data.url}`,"_blank")
+            setWebsite((prev) =>
+    prev.map((w) =>
+        w._id === id
+            ? {
+                  ...w,
+                  deployed: true,
+                  deployurl: result.data.url,
+              }
+            : w
+    )
+);
         } catch (error) {
             console.log(error)
         }
@@ -106,9 +117,10 @@ function Dashboard() {
                 title={`website-${i}`}
                 width="100%"
                 height="100"
+                
             ></iframe>
 
-            <div className={Style.websiteinfo}>
+            <div className={Style.websiteinfo}onClick={()=>{navigate(`/editor/${w._id}`)}}>
 
                 <h3>{w.title}</h3>
 
@@ -121,7 +133,14 @@ function Dashboard() {
                     !w.deployed ? (
                         <button onClick={()=>{handledeploy(w._id)}}>Deploy</button>
                     ) : (
-                        <button>Share Link</button>
+                       <button
+    onClick={(e) => {
+        e.stopPropagation();
+        handlecopy(w);
+    }}
+>
+    {copiedId === w._id ? "Link Copied" : "Share Link"}
+</button>
                     )
                 }
 

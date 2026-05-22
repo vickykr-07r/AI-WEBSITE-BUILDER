@@ -51,25 +51,37 @@ function Home() {
           <div className={Style.right}>
             {userData && (
               <div className={Style.coins}>
-                <button>
+                <button
+                  onClick={() => {
+                    navigate("/pricing");
+                  }}
+                >
                   <GiTwoCoins /> {userData?.credits}
                 </button>
               </div>
             )}
 
             <div>
-              <p>Pricing</p>
+              <p
+                onClick={() => {
+                  navigate("/pricing");
+                }}
+              >
+                Pricing
+              </p>
 
               {!userData ? (
-                <button onClick={() => setOpenLogin(true)}>
-                  Get Started
-                </button>
+                <button onClick={() => setOpenLogin(true)}>Get Started</button>
               ) : (
                 <img
                   src={userData?.avatar}
                   alt="profile"
                   onClick={() => setOpenProfile(!openProfile)}
-                  style={{ cursor: "pointer", width: "40px", borderRadius: "50%" }}
+                  style={{
+                    cursor: "pointer",
+                    width: "40px",
+                    borderRadius: "50%",
+                  }}
                 />
               )}
             </div>
@@ -79,13 +91,20 @@ function Home() {
         <div className={Style.box}>
           <h1>Build Websites with AI 🚀</h1>
           <p>
-            Generate production-ready websites with clean code,
-            modern UI, animations and full responsiveness.
+            Generate production-ready websites with clean code, modern UI,
+            animations and full responsiveness.
           </p>
-          {userData ? <button onClick={()=>{navigate("/dashboard")}}>Go To Dashboard</button>:<button onClick={() => setOpenLogin(true)}>
-            Start Building
-          </button>}
-          
+          {userData ? (
+            <button
+              onClick={() => {
+                navigate("/dashboard");
+              }}
+            >
+              Go To Dashboard
+            </button>
+          ) : (
+            <button onClick={() => setOpenLogin(true)}>Start Building</button>
+          )}
         </div>
 
         <div className={Style.card}>
@@ -93,16 +112,14 @@ function Home() {
             <div key={i} className={Style.cardata}>
               <h2>{h}</h2>
               <p>
-                GenWeb AI builds real websites with clean code,
-                animations, responsiveness and scalable structure.
+                GenWeb AI builds real websites with clean code, animations,
+                responsiveness and scalable structure.
               </p>
             </div>
           ))}
         </div>
 
-        <footer>
-          © {new Date().getFullYear()} GenWeb.AI
-        </footer>
+        <footer>© {new Date().getFullYear()} GenWeb.AI</footer>
 
         {openLogin && (
           <Login open={openLogin} onClose={() => setOpenLogin(false)} />
@@ -120,7 +137,13 @@ function Home() {
               onClick={() => navigate("/dashboard")}
               style={{ cursor: "pointer" }}
             >
-              <h4 onClick={()=>{navigate("/dashoard")}}>Dashboard</h4>
+              <h4
+                onClick={() => {
+                  navigate("/dashoard");
+                }}
+              >
+                Dashboard
+              </h4>
             </div>
 
             <div>
