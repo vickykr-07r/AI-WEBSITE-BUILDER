@@ -55,6 +55,9 @@
   );
   opacity: 0;
   transition: 0.3s;
+
+  /* IMPORTANT */
+  pointer-events: none;
 }
 
 .pricingbox > div:hover::before {
@@ -67,12 +70,19 @@
   box-shadow: 0 20px 45px rgba(99, 102, 241, 0.25);
 }
 
+.pricingbox h1,
+.pricingbox h2,
+.pricingbox div,
+.pricingbox ul,
+.pricingbox li {
+  position: relative;
+  z-index: 2;
+}
+
 .pricingbox h1 {
   font-size: 28px;
   text-transform: capitalize;
   margin-bottom: 10px;
-  position: relative;
-  z-index: 2;
 }
 
 .pricingbox h2 {
@@ -81,8 +91,6 @@
   font-weight: 400;
   line-height: 1.6;
   margin-bottom: 22px;
-  position: relative;
-  z-index: 2;
 }
 
 .pri {
@@ -143,11 +151,20 @@
   color: white;
   background: linear-gradient(135deg, #6366f1, #8b5cf6);
   transition: 0.3s;
+
+  /* IMPORTANT */
+  position: relative;
+  z-index: 10;
 }
 
 .button:hover {
   transform: scale(1.03);
   box-shadow: 0 10px 25px rgba(99, 102, 241, 0.35);
+}
+
+.button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .popularCard {
@@ -167,6 +184,7 @@
   font-size: 10px;
   font-weight: 700;
   transform: rotate(45deg);
+  z-index: 5;
 }
 
 @media (max-width: 768px) {

@@ -9,7 +9,7 @@ export const plans={
         credits:500,
         plans:"pro"
     },
-     enterprise:{
+     enterprises:{
         price:1499,
         credits:1000,
         plans:"enterprise"

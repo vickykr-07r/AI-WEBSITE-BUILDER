@@ -1,34 +1,42 @@
-import express from "express"
-const app=express();
-
-import dotenv from "dotenv"
-dotenv.config();
-
+import express from "express";
+import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-app.use(cookieParser())
+import cors from "cors";
 
-app.use(express.json())
-
-import cors from "cors"
-app.use(cors(
-    {
-        origin:"http://localhost:5173",
-        credentials:true
-    }
-))
-
-import dbconnect from "./db/db.connect.js";
+import { stripewebhook } from "./Controllers/stripewebhook.controllers.js";
 
 import { authRouter } from "./Routes/auth.routes.js";
-app.use("/api/auth",authRouter)
-
 import { userRouter } from "./Routes/user.routes.js";
-app.use("/api/user",userRouter)
-
 import { websiteRouter } from "./Routes/website.routes.js";
-app.use("/api/website",websiteRouter)
+import billingRouter from "./Routes/billing.routes.js";
 
-app.listen(process.env.PORT,()=>{
-    console.log("the app is listening")
-    dbconnect();  
-}) 
+dotenv.config();
+
+const app = express();
+
+app.post(
+  "/api/stripe/webhook",
+  express.raw({ type: "application/json" }),
+  stripewebhook
+);
+
+app.use(cookieParser());
+
+app.use(express.json());
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+
+app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
+app.use("/api/website", websiteRouter);
+app.use("/api/website", billingRouter);
+
+app.listen(process.env.PORT, () => {
+  console.log("the app is listening");
+  dbconnect();
+});
